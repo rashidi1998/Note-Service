@@ -1,6 +1,8 @@
 package com.example.notesservice.controller;
 
 import com.example.notesservice.domain.Content;
+import com.example.notesservice.dto.ContentRequestDTO;
+import com.example.notesservice.dto.ContentResponseDTO;
 import com.example.notesservice.exception.CustomErrorModel;
 import com.example.notesservice.service.ContentService;
 import io.swagger.annotations.Api;
@@ -24,17 +26,17 @@ public class ContentController {
     }
 
     @PostMapping
-    public ResponseEntity<Content> createPost(@RequestBody Content content) {
+    public ResponseEntity<Content> createPost(@RequestBody ContentRequestDTO content) {
         return ResponseEntity.ok(contentService.createContent(content));
     }
 
     @GetMapping("/{contentId}")
-    public ResponseEntity<Content> getContent(@PathVariable String contentId) {
+    public ResponseEntity<ContentResponseDTO> getContent(@PathVariable String contentId) {
         return ResponseEntity.ok(contentService.getContent(contentId).get());
     }
 
     @PutMapping("/{contentId}")
-    public ResponseEntity<Content> editContent(@PathVariable String contentId, @RequestBody Content content){
+    public ResponseEntity<Content> editContent(@PathVariable String contentId, @RequestBody Content content) throws CustomErrorModel {
         return ResponseEntity.ok(contentService.updateContent(contentId, content));
     }
 

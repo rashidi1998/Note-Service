@@ -8,7 +8,6 @@ import java.util.Optional;
 //import com.mongodb.Tag;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.util.Predicates;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -28,7 +27,6 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)//
                 .select()//
                 .apis(RequestHandlerSelectors.any())//
-                .paths(Predicates.negate(PathSelectors.regex("/error")))//
                 .build()//
                 .apiInfo(metadata())//
                 .useDefaultResponseMessages(false)//

@@ -1,10 +1,15 @@
 package com.example.notesservice.service;
 
 import com.example.notesservice.domain.Content;
+import com.example.notesservice.dto.ContentMapper;
+import com.example.notesservice.dto.ContentRequestDTO;
+import com.example.notesservice.dto.ContentResponseDTO;
 import com.example.notesservice.exception.CustomErrorModel;
 import com.example.notesservice.repo.ContentRepository;
 import com.example.notesservice.repo.LikeRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
+import springfox.documentation.swagger2.mappers.ModelMapper;
 
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
@@ -21,24 +26,30 @@ public class ContentService {
         this.likeRepository = likeRepository;
     }
 
-    public Content createContent(Content content) {
+    public Content createContent(ContentRequestDTO content) {
         content.setCreatedAt(LocalDate.now());
-        return contentRepository.save(content);
+        return contentRepository.save(ContentMapper.convertToDO(content));
     }
 
     public List<Content> getAllContents() {
         return contentRepository.findAllByNewToOld();
     }
 
-    public Optional<Content> getContent(String contentId) {
-        return contentRepository.findById(contentId);
+    public Optional<ContentResponseDTO> getContent(String contentId) {
+        ContentResponseDTO contentResponseDTO = new ContentResponseDTO();
+        contentResponseDTO.setLikes(likeRepository.getAllByContentId(contentId));
+        Optional<Content> content = contentRepository.findById(contentId);
+        contentResponseDTO.setNote(content.get().getNote());
+        contentResponseDTO.setCreatedAt(content.get().getCreatedAt());
+        contentResponseDTO.setUpdatedAt(content.get().getUpdatedAt());
+        return Optional.of(contentResponseDTO);
     }
 
     public void deleteContent(String contentId) {
         contentRepository.deleteById(contentId);
     }
 
-    public Content updateContent(String contentId, Content content) {
+    public Content updateContent(String contentId, Content content) throws CustomErrorModel {
         Optional<Content> content1 = contentRepository.findById(contentId);
         if (content1.isPresent()) {
             Content content2 = content1.get();
